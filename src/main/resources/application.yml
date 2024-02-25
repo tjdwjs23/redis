@@ -1,0 +1,15 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  redis:
+    host: redis-001.bna1cf.0001.apn2.cache.amazonaws.com
+    port: 6379
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+logging:
+  level:
+    demo:
+      webflux: DEBUG

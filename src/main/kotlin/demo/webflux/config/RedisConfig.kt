@@ -13,15 +13,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
 class RedisConfig {
-    @Value("\${spring.redis.host}")
-    private val redisHost: String? = null
+    @Value("\${server.data.redis.host}")
+    private val host: String? = null
 
-    @Value("\${spring.redis.port}")
-    private val redisPort = 0
+    @Value("\${server.data.redis.port}")
+    private val port = 0
 
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
-        return LettuceConnectionFactory(RedisStandaloneConfiguration(redisHost!!, redisPort))
+        return LettuceConnectionFactory(RedisStandaloneConfiguration(host!!, port))
     }
 
     @Bean
@@ -29,7 +29,6 @@ class RedisConfig {
         val redisTemplate: RedisTemplate<String, Any> = RedisTemplate()
         redisTemplate.setConnectionFactory(redisConnectionFactory())
         redisTemplate.setKeySerializer(StringRedisSerializer())
-
 
         /* Java 기본 직렬화가 아닌 JSON 직렬화 설정 */
         redisTemplate.setValueSerializer(GenericJackson2JsonRedisSerializer())

@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.ValueOperations
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
@@ -13,7 +14,7 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
 
     fun save(board: Board): Board {
         if (board.createDate == null) {
-            board.createDate = LocalDateTime.now()
+            board.createDate = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         }
         valueOperations.set(board.id, board)
         return board

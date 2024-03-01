@@ -37,6 +37,11 @@ dependencies {
 
     // Redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+
+    // Spring Security
+    implementation("com.auth0:java-jwt:3.19.2")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

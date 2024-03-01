@@ -2,9 +2,9 @@ name: CI # workflow의 이름을 지정
 
 on:
   push:
-    branches:
-      - deploy # deploy branche가 push 됬을때 
-  workflow_dispatch: # 수동으로 workflow 실행
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   build:

@@ -20,6 +20,7 @@ jobs:
           java-version: 17
           
       - uses: actions/checkout@v2
+      - run: mkdir ./src/main/resources
       - run: touch ./src/main/resources/application.yml
       - run: echo "${{ secrets.APPLICATION }}" | base64 --decode > ./src/main/resources/application.yml #  github secrets에 암호화되어 저장된 APPLICATION  secret파일 본문을 가져와 
 

@@ -1,6 +1,6 @@
 # Template
 
-template project.
+Template project.
 
 ## Overview
 
@@ -9,7 +9,7 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 ## Tech Stack
 
 - Java 17
-- Kotlin
+- Kotlin 1.5.31
 - WebFlux (used for building asynchronous project)
 - AWS EC2
 - AWS S3

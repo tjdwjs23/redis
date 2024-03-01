@@ -2,9 +2,9 @@ name: CI # workflow의 이름을 지정
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "prod" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "prod" ]
 
 jobs:
   build:

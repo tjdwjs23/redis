@@ -4,7 +4,7 @@ Template project.
 
 ## Overview
 
-This project is a web application that implements CRUD (Create, Read, Update, Delete) functionality for a bulletin board. It utilizes AWS Elastic Cache with Redis as the database.
+This project is a web application that implements CRUD (Create, Read, Update, Delete) & spring security functionality for a bulletin board. It utilizes AWS Elastic Cache with Redis as the database.
 
 ## Tech Stack
 

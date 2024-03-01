@@ -1,8 +1,6 @@
 name: CI # workflow의 이름을 지정
 
-on:
-  push:
-    tags: V*
+on: [push]
 
 jobs:
   build:

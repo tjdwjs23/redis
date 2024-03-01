@@ -13,16 +13,24 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
     private val valueOperations: ValueOperations<String, Any> = redisTemplate.opsForValue()
 
     fun save(board: Board): Board {
-        if (board.createDate == null) {
-            board.createDate = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        runCatching {
+            if (board.createDate == null) {
+                board.createDate = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            }
+            valueOperations.set(board.id, board)
+            return board
+        }.getOrElse {
+            throw RuntimeException("게시글 저장에 실패했습니다. 원인: ${it.message}")
         }
-        valueOperations.set(board.id, board)
-        return board
     }
 
 
     fun getAll(): List<Board> {
-        val keys = redisTemplate.keys("*") ?: setOf()
-        return keys.mapNotNull { id -> valueOperations.get(id) as? Board }
+        runCatching {
+            val keys = redisTemplate.keys("*") ?: setOf()
+            return keys.mapNotNull { id -> valueOperations.get(id) as? Board }
+        }.getOrElse {
+            throw RuntimeException("게시글 조회에 실패했습니다. 원인: ${it.message}")
+        }
     }
 }

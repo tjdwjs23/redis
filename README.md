@@ -11,6 +11,9 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 - Java 17
 - Kotlin
 - WebFlux (used for building asynchronous project)
+- AWS EC2
+- AWS S3
+- AWS Elastic Cache
 
 ## CI/CD
 

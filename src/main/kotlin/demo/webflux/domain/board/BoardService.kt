@@ -12,6 +12,11 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
 
     private val valueOperations: ValueOperations<String, Any> = redisTemplate.opsForValue()
 
+    /**
+     * 게시글 저장
+     * @param board 게시글
+     * @return 저장된 게시글
+     */
     fun save(board: Board): Board {
         runCatching {
             if (board.createDate == null) {

@@ -11,7 +11,13 @@ import java.time.LocalDateTime
 
 @RestController
 class BoardController(private val boardService: BoardService) {
-    @PostMapping("/")
+
+    /**
+     * 게시글 저장
+     * @param board 게시글
+     * @return 저장된 게시글
+     */
+    @PostMapping
     fun post(@RequestBody board : Board) : Board {
         boardService.save(board)
         return board

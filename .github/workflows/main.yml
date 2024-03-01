@@ -22,7 +22,11 @@ jobs:
       - uses: actions/checkout@v2
       - run: mkdir ./src/main/resources
       - run: touch ./src/main/resources/application.yml
-      - run: echo "${{ secrets.APPLICATION }}" | base64 --decode > ./src/main/resources/application.yml #  github secrets에 암호화되어 저장된 APPLICATION  secret파일 본문을 가져와 
+      - run: echo "${{ secrets.APPLICATION }}" | base64 --decode > ./src/main/resources/application.yml #  github secrets에 암호화되어 저장된 APPLICATION secret파일 설
+      - uses: actions/upload-artifact@v2
+        with:
+          name: application.yml
+          path: ./src/main/resources/application.yml
 
       - name: Grant execute permission for gradlew # gradlew 사용 권한 부여
         run: chmod 777 ./gradlew

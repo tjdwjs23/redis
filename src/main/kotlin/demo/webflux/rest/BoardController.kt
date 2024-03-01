@@ -17,7 +17,12 @@ class BoardController(private val boardService: BoardService) {
         return board
     }
 
-    @GetMapping("/")
+    /**
+     * 모든 게시글 조회
+     * @return 게시글 목록
+     * @throws RuntimeException 게시글 조회에 실패했을 때
+     */
+    @GetMapping
     fun getAll() : List<Board> {
         return boardService.getAll()
     }

@@ -6,10 +6,10 @@ on:
   pull_request:
     branches: [ "master" ]
 env:
-  PROJECT_NAME: moduform_project
-  BUCKET_NAME: moduform-cicd-bucket
-  CODE_DEPLOY_APP_NAME: moduform_cicd
-  DEPLOYMENT_GROUP_NAME: moduform_instance
+  PROJECT_NAME: template
+  BUCKET_NAME: template-cicd-bucket
+  CODE_DEPLOY_APP_NAME: template_cicd
+  DEPLOYMENT_GROUP_NAME: AWSCodeDeploy
 
 jobs:
   deploy:

@@ -11,6 +11,10 @@ import org.springframework.security.core.userdetails.User
 @Configuration
 @EnableWebFluxSecurity
 class HelloWebfluxSecurityConfig {
+    /**
+     * 사용자 정보를 제공하는 서비스 빈 등록
+     * @return 사용자 정보 제공 서비스
+     */
     @Bean
     fun userDetailsService(): ReactiveUserDetailsService {
         val userDetails = User.withDefaultPasswordEncoder()

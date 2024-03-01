@@ -30,6 +30,11 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
     }
 
 
+    /**
+     * 모든 게시글 조회
+     * @return 게시글 목록
+     * @throws RuntimeException 게시글 조회에 실패했을 때
+     */
     fun getAll(): List<Board> {
         runCatching {
             val keys = redisTemplate.keys("*") ?: setOf()

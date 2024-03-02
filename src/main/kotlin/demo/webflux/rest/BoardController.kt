@@ -3,13 +3,11 @@ package demo.webflux.rest
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import demo.webflux.domain.board.BoardService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
 @RestController
+@RequestMapping("/board")
 class BoardController(private val boardService: BoardService) {
 
     /**
@@ -32,11 +30,44 @@ class BoardController(private val boardService: BoardService) {
     fun getAll() : List<Board> {
         return boardService.getAll()
     }
+
+    /**
+     * 특정 게시글 조회
+     * @param id 게시글의 고유 식별자
+     * @return 게시글
+     * @throws RuntimeException 게시글 조회에 실패했을 때
+     */
+    @GetMapping("/{id}")
+    fun getById(@PathVariable id: String): Board {
+        return boardService.getById(id)
+    }
+
+    /**
+     * 게시글 삭제
+     * @param id 게시글의 고유 식별자
+     * @throws RuntimeException 게시글 삭제에 실패했을 때
+     */
+    @DeleteMapping("/{id}")
+    fun deleteById(@PathVariable id: String) {
+        boardService.deleteById(id)
+    }
+
+    /**
+     * 게시글 수정
+     * @param id 게시글의 고유 식별자
+     * @param updatedBoard 수정된 게시글
+     * @return 수정된 게시글
+     * @throws RuntimeException 게시글 수정에 실패했을 때
+     */
+    @PutMapping("/{id}")
+    fun updateById(@PathVariable id: String, @RequestBody updatedBoard: Board): Board {
+        return boardService.updateById(id, updatedBoard)
+    }
 }
 
 data class Board @JsonCreator constructor(
-    @JsonProperty("id") val id: String,
-    @JsonProperty("title") val title: String,
-    @JsonProperty("content") val content: String,
-    @JsonProperty("createDate") var createDate: String? = null
+        @JsonProperty("id") var id: String,
+        @JsonProperty("title") val title: String,
+        @JsonProperty("content") val content: String,
+        @JsonProperty("createDate") var createDate: String? = null
 )

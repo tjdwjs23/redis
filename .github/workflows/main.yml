@@ -1,6 +1,8 @@
-name: CI # workflow의 이름을 지정
+name: CI / CD
 
-on: [push]
+on:
+  push:
+    tags: V* # V를 앞글자로 가지는 태그가 push 될 때 해당 workflow 실행 - ex) V2, V3
 
 jobs:
   build:

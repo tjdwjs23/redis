@@ -1,25 +1,15 @@
 #!/bin/bash
-BUILD_JAR=$(ls /home/ec2-user/template/build/libs/*.jar)
-JAR_NAME=$(basename $BUILD_JAR)
-echo "> build 파일명: $JAR_NAME" >> /home/ec2-user/template/deploy.log
+IMAGE_NAME=dockercodemaster/redis # Docker Hub에서 사용하는 이미지 이름
+CONTAINER_NAME=my-container # 컨테이너 이름
 
-echo "> build 파일 복사" >> /home/ec2-user/template/deploy.log
-DEPLOY_PATH=/home/ec2-user/template//build/libs/
-cp $BUILD_JAR $DEPLOY_PATH
+echo "> 현재 실행중인 Docker 컨테이너 id 확인"
+CURRENT_ID=$(docker ps -q -f "name=$CONTAINER_NAME")
 
-echo "> 현재 실행중인 애플리케이션 pid 확인" >> /home/ec2-user/template/deploy.log
-CURRENT_PID=$(pgrep -f $JAR_NAME)
-
-if [ -z $CURRENT_PID ]
+if [ -n "$CURRENT_ID" ]
 then
-  echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다." >> /home/ec2-user/template/deploy.log
-else
-  echo "> kill -15 $CURRENT_PID"
-  kill -15 $CURRENT_PID
-  sleep 5
+  echo "> 현재 구동중인 Docker 컨테이너 $CURRENT_ID 종료"
+  docker rm -f $CURRENT_ID
 fi
 
-DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
-echo "> DEPLOY_JAR 배포"    >> /home/ec2-user/template/deploy.log
-chmod +x $DEPLOY_JAR
-nohup java -jar $DEPLOY_JAR >> /home/ec2-user/deploy.log 2>/home/ec2-user/template/deploy_err.log &
+echo "> Docker 이미지 $IMAGE_NAME 실행"
+docker run -d --name $CONTAINER_NAME -p 8080:8080 $IMAGE_NAME

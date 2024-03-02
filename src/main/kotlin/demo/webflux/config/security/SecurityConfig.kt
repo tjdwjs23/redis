@@ -2,6 +2,7 @@ package demo.webflux.config.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
@@ -24,7 +25,9 @@ class SecurityConfig {
     @Bean
     fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         return http
-            .csrf { it.disable() }
-            .build()
+                .httpBasic { httpBasic -> httpBasic.disable() }
+                .csrf { csrf -> csrf.disable() }
+                .build()
     }
+
 }

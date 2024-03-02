@@ -39,12 +39,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      
+
       - name: Docker Image Build and Push
         run: |
           TAG=${{ github.ref }} # "refs/tags/V15"와 같은 형식
           TAG=${TAG#refs/tags/} # "V15"와 같은 형식
-      
+
           docker build . --build-arg JAR_FILE=build/libs/webflux-0.0.1-SNAPSHOT.jar -t dockercodemaster/redis:$TAG
           docker push dockercodemaster/redis:$TAG
         

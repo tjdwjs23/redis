@@ -1,8 +1,8 @@
-package demo.webflux.rest
+package demo.webflux.adapters.ui.board
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonProperty
-import demo.webflux.domain.board.BoardService
+import demo.webflux.application.usecases.board.service.BoardService
+import demo.webflux.ports.input.BoardRequest
+import demo.webflux.ports.output.BoardResponse
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,10 +15,9 @@ class BoardController(private val boardService: BoardService) {
      */
     @PostMapping
     fun post(
-        @RequestBody board: Board,
-    ): Board {
-        boardService.save(board)
-        return board
+        @RequestBody boardRequest: BoardRequest,
+    ): BoardResponse {
+        return boardService.save(boardRequest)
     }
 
     /**
@@ -27,7 +26,7 @@ class BoardController(private val boardService: BoardService) {
      * @throws RuntimeException 게시글 조회에 실패했을 때
      */
     @GetMapping
-    fun getAll(): List<Board> {
+    fun getAll(): List<BoardResponse> {
         return boardService.getAll()
     }
 
@@ -40,7 +39,7 @@ class BoardController(private val boardService: BoardService) {
     @GetMapping("/{id}")
     fun getById(
         @PathVariable id: String,
-    ): Board {
+    ): BoardResponse {
         return boardService.getById(id)
     }
 
@@ -66,17 +65,8 @@ class BoardController(private val boardService: BoardService) {
     @PutMapping("/{id}")
     fun updateById(
         @PathVariable id: String,
-        @RequestBody updatedBoard: Board,
-    ): Board {
-        return boardService.updateById(id, updatedBoard)
+        @RequestBody boardRequest: BoardRequest,
+    ): BoardResponse {
+        return boardService.updateById(id, boardRequest)
     }
 }
-
-data class Board
-    @JsonCreator
-    constructor(
-        @JsonProperty("id") var id: String,
-        @JsonProperty("title") val title: String,
-        @JsonProperty("content") val content: String,
-        @JsonProperty("createDate") var createDate: String? = null,
-    )

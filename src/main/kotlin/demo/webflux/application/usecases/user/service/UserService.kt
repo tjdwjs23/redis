@@ -1,6 +1,8 @@
-package demo.webflux.domain.user
+package demo.webflux.application.usecases.user.service
 
 import demo.webflux.config.security.JwtTokenProvider
+import demo.webflux.ports.input.UserRequest
+import demo.webflux.ports.output.UserResponse
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -13,11 +15,11 @@ class UserService(
 ) {
     private val valueOperations = redisTemplate.opsForValue()
 
-    fun save(user: User): User {
+    fun save(userRequest: UserRequest): UserResponse {
         runCatching {
-            val encodedPassword = passwordEncoder.encode(user.password)
-            valueOperations.set(user.username, encodedPassword)
-            return User(user.username, encodedPassword)
+            val encodedPassword = passwordEncoder.encode(userRequest.password)
+            valueOperations.set(userRequest.username, encodedPassword)
+            return UserResponse(userRequest.username, encodedPassword)
         }.getOrElse {
             throw RuntimeException("사용자 저장에 실패했습니다. 원인: ${it.message}")
         }

@@ -1,6 +1,7 @@
-package demo.webflux.domain.board
+package demo.webflux.application.usecases.board.service
 
-import demo.webflux.rest.Board
+import demo.webflux.ports.input.BoardRequest
+import demo.webflux.ports.output.BoardResponse
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.ValueOperations
 import org.springframework.stereotype.Service
@@ -18,13 +19,18 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
      * @param board 게시글
      * @return 저장된 게시글
      */
-    fun save(board: Board): Board {
+    fun save(boardRequest: BoardRequest): BoardResponse {
         runCatching {
-            if (board.createDate == null) {
-                board.createDate = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            if (boardRequest.createDate == null) {
+                boardRequest.createDate = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
             }
-            valueOperations.set(board.id, board)
-            return board
+            valueOperations.set(boardRequest.id, boardRequest)
+            return BoardResponse(
+                boardRequest.id,
+                boardRequest.title,
+                boardRequest.content,
+                boardRequest.createDate,
+            )
         }.getOrElse {
             throw RuntimeException("게시글 저장에 실패했습니다. 원인: ${it.message}")
         }
@@ -35,10 +41,10 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
      * @return 게시글 목록
      * @throws RuntimeException 게시글 조회에 실패했을 때
      */
-    fun getAll(): List<Board> {
+    fun getAll(): List<BoardResponse> {
         runCatching {
             val keys = redisTemplate.keys("*")
-            return keys.mapNotNull { id -> valueOperations.get(id) as? Board }
+            return keys.mapNotNull { id -> valueOperations.get(id) as? BoardResponse }
         }.getOrElse {
             throw RuntimeException("게시글 조회에 실패했습니다. 원인: ${it.message}")
         }
@@ -53,8 +59,8 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
     @GetMapping("/{id}")
     fun getById(
         @PathVariable id: String,
-    ): Board {
-        val board = valueOperations.get(id) as? Board
+    ): BoardResponse {
+        val board = valueOperations.get(id) as? BoardResponse
         if (board != null) {
             return board
         } else {
@@ -72,13 +78,18 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
     @GetMapping("/{id}")
     fun updateById(
         @PathVariable id: String,
-        updatedBoard: Board,
-    ): Board {
-        val existingBoard = valueOperations.get(id) as? Board
+        boardRequest: BoardRequest,
+    ): BoardResponse {
+        val existingBoard = valueOperations.get(id) as? BoardResponse
         if (existingBoard != null) {
-            updatedBoard.id = existingBoard.id
-            valueOperations.set(id, updatedBoard)
-            return updatedBoard
+            boardRequest.id = existingBoard.id
+            valueOperations.set(id, boardRequest)
+            return BoardResponse(
+                boardRequest.id,
+                boardRequest.title,
+                boardRequest.content,
+                boardRequest.createDate,
+            )
         } else {
             throw RuntimeException("게시글을 찾을 수 없습니다.")
         }

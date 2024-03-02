@@ -13,11 +13,12 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 - WebFlux (used for building asynchronous project)
 - AWS EC2
 - AWS S3
+- Docker
 - AWS Elastic Cache
 
 ## CI/CD
 
-CI/CD is set up using GitHub Actions for deploying to S3 and EC2. It is configured to automatically deploy when pushing to the main branch.
+CI/CD is set up using GitHub Actions for deploying to Docker and EC2. It is configured to automatically deploy when pushing to Tag(V*).
 
 ## Contributing
 

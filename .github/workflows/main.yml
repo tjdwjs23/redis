@@ -54,13 +54,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-      
+
       - name: Deploy to EC2
         run: |
           aws deploy create-deployment \
-            --application-name my-application \
+            --application-name ${{ secrets.AWS_CODEDEPLOY_NAME }} \
             --deployment-config-name CodeDeployDefault.OneAtATime \
-            --deployment-group-name my-deployment-group \
+            --deployment-group-name ${{ secrets.AWS_CODEDEPLOY_GROUP }} \
             --description "My GitHub Actions deployment" \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
-

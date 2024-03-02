@@ -4,19 +4,19 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import demo.webflux.domain.board.BoardService
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/board")
 class BoardController(private val boardService: BoardService) {
-
     /**
      * 게시글 저장
      * @param board 게시글
      * @return 저장된 게시글
      */
     @PostMapping
-    fun post(@RequestBody board : Board) : Board {
+    fun post(
+        @RequestBody board: Board,
+    ): Board {
         boardService.save(board)
         return board
     }
@@ -27,7 +27,7 @@ class BoardController(private val boardService: BoardService) {
      * @throws RuntimeException 게시글 조회에 실패했을 때
      */
     @GetMapping
-    fun getAll() : List<Board> {
+    fun getAll(): List<Board> {
         return boardService.getAll()
     }
 
@@ -38,7 +38,9 @@ class BoardController(private val boardService: BoardService) {
      * @throws RuntimeException 게시글 조회에 실패했을 때
      */
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: String): Board {
+    fun getById(
+        @PathVariable id: String,
+    ): Board {
         return boardService.getById(id)
     }
 
@@ -48,7 +50,9 @@ class BoardController(private val boardService: BoardService) {
      * @throws RuntimeException 게시글 삭제에 실패했을 때
      */
     @DeleteMapping("/{id}")
-    fun deleteById(@PathVariable id: String) {
+    fun deleteById(
+        @PathVariable id: String,
+    ) {
         boardService.deleteById(id)
     }
 
@@ -60,14 +64,19 @@ class BoardController(private val boardService: BoardService) {
      * @throws RuntimeException 게시글 수정에 실패했을 때
      */
     @PutMapping("/{id}")
-    fun updateById(@PathVariable id: String, @RequestBody updatedBoard: Board): Board {
+    fun updateById(
+        @PathVariable id: String,
+        @RequestBody updatedBoard: Board,
+    ): Board {
         return boardService.updateById(id, updatedBoard)
     }
 }
 
-data class Board @JsonCreator constructor(
+data class Board
+    @JsonCreator
+    constructor(
         @JsonProperty("id") var id: String,
         @JsonProperty("title") val title: String,
         @JsonProperty("content") val content: String,
-        @JsonProperty("createDate") var createDate: String? = null
-)
+        @JsonProperty("createDate") var createDate: String? = null,
+    )

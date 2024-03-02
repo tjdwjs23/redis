@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
-
     private val valueOperations: ValueOperations<String, Any> = redisTemplate.opsForValue()
 
     /**
@@ -52,7 +51,9 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
      * @throws RuntimeException 게시글 조회에 실패했을 때
      */
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: String): Board {
+    fun getById(
+        @PathVariable id: String,
+    ): Board {
         val board = valueOperations.get(id) as? Board
         if (board != null) {
             return board
@@ -69,7 +70,10 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
      * @throws RuntimeException 게시글 수정에 실패했을 때
      */
     @GetMapping("/{id}")
-    fun updateById(@PathVariable id: String, updatedBoard: Board): Board {
+    fun updateById(
+        @PathVariable id: String,
+        updatedBoard: Board,
+    ): Board {
         val existingBoard = valueOperations.get(id) as? Board
         if (existingBoard != null) {
             updatedBoard.id = existingBoard.id
@@ -86,13 +90,13 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
      * @throws RuntimeException 게시글 삭제에 실패했을 때
      */
     @GetMapping("/{id}")
-    fun deleteById(@PathVariable id: String) {
+    fun deleteById(
+        @PathVariable id: String,
+    ) {
         runCatching {
             redisTemplate.delete(id)
         }.getOrElse {
             throw RuntimeException("게시글 삭제에 실패했습니다. 원인: ${it.message}")
         }
     }
-
-
 }

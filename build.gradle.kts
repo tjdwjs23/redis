@@ -3,11 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "3.2.3"
     id("io.spring.dependency-management") version "1.1.4"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.spring") version "1.9.22"
 }
 
-tasks.jar {enabled = false}
+tasks.jar { enabled = false }
 
 group = "demo"
 version = "0.0.1-SNAPSHOT"
@@ -24,10 +25,8 @@ dependencies {
     // Spring WebFlux
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.12")
     implementation("javax.validation:validation-api:2.0.1.Final")
-
-    // Spring Data R2DBC
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     // Kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -41,8 +40,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 
     // Spring Security
-    implementation("com.auth0:java-jwt:3.19.2")
+    implementation("io.jsonwebtoken:jjwt:0.12.5")
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
     implementation("org.springframework.boot:spring-boot-starter-security")
+
+    // Swagger
+    implementation("io.springfox:springfox-boot-starter:3.0.0")
+    implementation("io.springfox:springfox-swagger-ui:3.0.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

@@ -10,7 +10,6 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
 
-
 @Configuration
 class RedisConfig {
     @Value("\${server.data.redis.host}")
@@ -30,7 +29,7 @@ class RedisConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory())
         redisTemplate.setKeySerializer(StringRedisSerializer())
 
-        /* Java 기본 직렬화가 아닌 JSON 직렬화 설정 */
+        // Java 기본 직렬화가 아닌 JSON 직렬화 설정
         redisTemplate.setValueSerializer(GenericJackson2JsonRedisSerializer())
 
         return redisTemplate

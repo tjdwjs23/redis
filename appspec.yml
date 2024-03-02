@@ -15,4 +15,4 @@ hooks:
   ApplicationStart:
     - location: scripts/deploy.sh # ApplicationStart 단계에서 deploy.sh 실행
       timeout: 60
-      runas: ec2-user
+      runas: root

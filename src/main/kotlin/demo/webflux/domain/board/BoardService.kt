@@ -37,7 +37,7 @@ class BoardService(private val redisTemplate: RedisTemplate<String, Any>) {
      */
     fun getAll(): List<Board> {
         runCatching {
-            val keys = redisTemplate.keys("*") ?: setOf()
+            val keys = redisTemplate.keys("*")
             return keys.mapNotNull { id -> valueOperations.get(id) as? Board }
         }.getOrElse {
             throw RuntimeException("게시글 조회에 실패했습니다. 원인: ${it.message}")

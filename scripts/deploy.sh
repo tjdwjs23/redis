@@ -11,5 +11,8 @@ then
   docker rm -f $CURRENT_ID
 fi
 
+echo "> Docker 이미지 $IMAGE_NAME 업데이트"
+docker pull $IMAGE_NAME
+
 echo "> Docker 이미지 $IMAGE_NAME 실행"
 docker run -d --name $CONTAINER_NAME -p 8080:8080 $IMAGE_NAME

@@ -9,12 +9,12 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 ## Tech Stack
 
 - Java 17
-- Kotlin 1.5.31
-- WebFlux (used for building asynchronous project)
+- Kotlin 1.9.22
+- Spring WebFlux (used for building asynchronous project)
 - AWS EC2
 - AWS S3
 - Docker
-- AWS Elastic Cache
+- AWS Elastic Cache (Redis)
 
 ## CI/CD
 

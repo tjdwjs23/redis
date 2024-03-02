@@ -24,7 +24,6 @@ dependencies {
     // Spring WebFlux
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.12")
     implementation("javax.validation:validation-api:2.0.1.Final")
 
     // Kotlin
@@ -44,8 +43,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
 
     // Swagger
-    implementation("io.springfox:springfox-boot-starter:3.0.0")
-    implementation("io.springfox:springfox-swagger-ui:3.0.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.3.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

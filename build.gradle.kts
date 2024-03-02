@@ -7,6 +7,8 @@ plugins {
     kotlin("plugin.spring") version "1.9.22"
 }
 
+tasks.jar {enabled = false}
+
 group = "demo"
 version = "0.0.1-SNAPSHOT"
 

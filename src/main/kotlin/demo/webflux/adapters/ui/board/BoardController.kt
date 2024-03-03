@@ -53,8 +53,8 @@ class BoardController(private val boardService: BoardService) {
     @DeleteMapping("/{id}")
     fun deleteById(
         @PathVariable id: Long,
-    ) {
-        boardService.deleteById(id)
+    ): Mono<Boolean> {
+        return boardService.deleteById(id)
     }
 
     /**

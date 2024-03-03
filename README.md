@@ -12,14 +12,13 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 - Kotlin 1.9.22
 - Spring WebFlux - used for building asynchronous project
 - R2DBC (AWS RDS Maria DB)
-- AWS Elastic Cache (Redis) - caching
 - AWS EC2
-- AWS S3
+- AWS Elastic Cache (Redis) - caching
+- AWS Elastic Container Service (ECS)
 - Docker
 
 ## TODO
 - AWS Elastic Container Registr (ECR)
-- AWS Elastic Container Service (ECS)
 - Coroutine
   
 ## CI/CD

@@ -50,6 +50,9 @@ dependencies {
     // Swagger
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.3.0")
 
+    // Kotlin Logging
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.1")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

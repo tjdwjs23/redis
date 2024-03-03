@@ -40,7 +40,9 @@ class UserService(
 
                             userRepository.save(entity)
                                     .doOnSuccess { savedEntity ->
-                                        valueOperations.set(userRequest.username, encodedPassword)
+                                        if (savedEntity != null) {
+                                            valueOperations.set(userRequest.username, encodedPassword)
+                                        }
                                     }
                                     .map { savedEntity ->
                                         UserResponse(savedEntity.username!!, savedEntity.password!!)
@@ -69,7 +71,7 @@ class UserService(
                     }
                     .switchIfEmpty(Mono.error(RuntimeException("로그인에 실패했습니다.")))
         }
-
-
     }
+
+
 }

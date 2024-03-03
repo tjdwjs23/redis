@@ -57,8 +57,9 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t redis .
+          docker tag redis:latest 533267380391.dkr.ecr.ap-northeast-2.amazonaws.com/redis:latest
+          docker push 533267380391.dkr.ecr.ap-northeast-2.amazonaws.com/redis:latest
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         
       - name: Deploy to EC2

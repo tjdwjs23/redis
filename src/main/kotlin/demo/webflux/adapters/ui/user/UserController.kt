@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/user")
@@ -21,9 +22,8 @@ class UserController(private val userService: UserService) {
     @PostMapping("/signup")
     fun signup(
             @RequestBody userRequest: UserRequest,
-    ): ResponseEntity<UserResponse> {
-        val savedUser = userService.save(userRequest)
-        return ResponseEntity.ok(savedUser)
+    ): Mono<UserResponse> {
+        return userService.save(userRequest)
     }
 
     /**
@@ -34,8 +34,7 @@ class UserController(private val userService: UserService) {
     @PostMapping("/login")
     fun login(
         @RequestBody userRequest: UserRequest
-    ): ResponseEntity<String> {
-        val token = userService.login(userRequest.username, userRequest.password)
-        return ResponseEntity.ok(token)
+    ): Mono<String> {
+        return userService.login(userRequest.username, userRequest.password)
     }
 }

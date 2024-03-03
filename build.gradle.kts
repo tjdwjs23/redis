@@ -34,6 +34,11 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
 
+    // Spring Data R2DBC
+    implementation("org.springframework.data:spring-data-r2dbc")
+    implementation("org.mariadb:r2dbc-mariadb:1.1.3")
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+
     // Redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 

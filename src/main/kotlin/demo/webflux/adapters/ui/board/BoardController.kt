@@ -4,6 +4,8 @@ import demo.webflux.application.usecases.board.service.BoardService
 import demo.webflux.ports.input.BoardRequest
 import demo.webflux.ports.output.BoardResponse
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/board")
@@ -16,7 +18,7 @@ class BoardController(private val boardService: BoardService) {
     @PostMapping
     fun post(
         @RequestBody boardRequest: BoardRequest,
-    ): BoardResponse {
+    ): Mono<BoardResponse> {
         return boardService.save(boardRequest)
     }
 
@@ -26,7 +28,7 @@ class BoardController(private val boardService: BoardService) {
      * @throws RuntimeException 게시글 조회에 실패했을 때
      */
     @GetMapping
-    fun getAll(): List<BoardResponse> {
+    fun getAll(): Flux<BoardResponse> {
         return boardService.getAll()
     }
 
@@ -38,8 +40,8 @@ class BoardController(private val boardService: BoardService) {
      */
     @GetMapping("/{id}")
     fun getById(
-        @PathVariable id: String,
-    ): BoardResponse {
+        @PathVariable id: Long,
+    ):  Mono<BoardResponse> {
         return boardService.getById(id)
     }
 
@@ -50,7 +52,7 @@ class BoardController(private val boardService: BoardService) {
      */
     @DeleteMapping("/{id}")
     fun deleteById(
-        @PathVariable id: String,
+        @PathVariable id: Long,
     ) {
         boardService.deleteById(id)
     }
@@ -64,9 +66,9 @@ class BoardController(private val boardService: BoardService) {
      */
     @PutMapping("/{id}")
     fun updateById(
-        @PathVariable id: String,
+        @PathVariable id: Long,
         @RequestBody boardRequest: BoardRequest,
-    ): BoardResponse {
+    ): Mono<BoardResponse> {
         return boardService.updateById(id, boardRequest)
     }
 }

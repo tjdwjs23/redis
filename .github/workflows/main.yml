@@ -79,4 +79,5 @@ jobs:
           docker pull 533267380391.dkr.ecr.ap-northeast-2.amazonaws.com/redis:latest
           docker stop test_con || true
           docker rm test_con || true
-          docker run -d --name test_con -p 8080:8080 --restart unless-stopped ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          docker run -d --name test_con -p 8080:8080 --restart unless-stopped 533267380391.dkr.ecr.ap-northeast-2.amazonaws.com/redis:latest
+

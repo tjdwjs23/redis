@@ -17,6 +17,10 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 - AWS S3
 - Docker
 
+##TODO
+- AWS Elastic Container Registr (ECR)
+- AWS Elastic Container Service (ECS)
+
 ## CI/CD
 
 CI/CD is set up using GitHub Actions for deploying to Docker and EC2. It is configured to automatically deploy when pushing to Tag(V*).

@@ -1,6 +1,6 @@
-# Template
+# Spring Webflux With Elastic Cache
 
-Template project.
+spring-webflux-with-elastic-cache Project
 
 ## Overview
 

@@ -17,7 +17,7 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 - AWS S3
 - Docker
 
-##TODO
+## TODO
 - AWS Elastic Container Registr (ECR)
 - AWS Elastic Container Service (ECS)
 

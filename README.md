@@ -9,11 +9,11 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 ## Technology Stack
 - Java 17
 - Kotlin 1.9.22
-- Spring WebFlux - used for building asynchronous project
+- Spring WebFlux
 - R2DBC (AWS RDS Maria DB)
 - AWS EC2
 - AWS Elastic Cache (Redis)
-- AWS Elastic Container Registr (ECR)
+- AWS Elastic Container Registry (ECR)
 - Docker
 
 ## TODO

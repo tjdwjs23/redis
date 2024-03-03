@@ -20,7 +20,8 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 ## TODO
 - AWS Elastic Container Registr (ECR)
 - AWS Elastic Container Service (ECS)
-
+- Coroutine
+  
 ## CI/CD
 
 CI/CD is set up using GitHub Actions for deploying to Docker and EC2. It is configured to automatically deploy when pushing to Tag(V*).

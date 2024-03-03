@@ -47,8 +47,9 @@ jobs:
       
       - name: Docker Image Build and Push
         run: |
-          docker build . --build-arg JAR_FILE=build/libs/webflux-0.0.1-SNAPSHOT.jar -t public.ecr.aws/k4g0n1m3/redis
-          docker push public.ecr.aws/k4g0n1m3/redis
+          docker build -t redis .
+          docker tag redis:latest public.ecr.aws/k4g0n1m3/redis:latest
+          docker push public.ecr.aws/k4g0n1m3/redis:latest
         
       - name: Deploy to EC2
         run: |

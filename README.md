@@ -4,26 +4,27 @@ Template project.
 
 ## Overview
 
-This project is a web application that implements CRUD (Create, Read, Update, Delete) & spring security functionality for a bulletin board. It utilizes AWS Elastic Cache with Redis as the database.
+This project is a web application that implements CRUD (Create, Read, Update, Delete) and Spring Security functionalities for a bulletin board system. It leverages AWS Elastic Cache with Redis for its database operations.
 
-## Tech Stack
-
+## Technology Stack
 - Java 17
 - Kotlin 1.9.22
 - Spring WebFlux - used for building asynchronous project
 - R2DBC (AWS RDS Maria DB)
 - AWS EC2
-- AWS Elastic Cache (Redis) - caching
-- AWS Elastic Container Service (ECS)
+- AWS Elastic Cache (Redis)
+- AWS Elastic Container Registr (ECR)
 - Docker
 
 ## TODO
-- AWS Elastic Container Registr (ECR)
+- AWS Elastic Container Service (ECS)
 - Coroutine
   
 ## CI/CD
 
-CI/CD is set up using GitHub Actions for deploying to Docker and EC2. It is configured to automatically deploy when pushing to Tag(V*).
+The CI/CD is set up using GitHub Actions and is configured to automatically deploy to Docker and EC2 when a push to the Tag(V*) is made.
+
+Notably, the CI/CD process includes building a JAR file, which is then transformed into a Docker image. This Docker image is deployed to AWS's ECR (Elastic Container Registry), and the service is subsequently deployed on EC2 based on this Docker image. All these steps are automated through GitHub Actions and Action Runner.
 
 ## Contributing
 

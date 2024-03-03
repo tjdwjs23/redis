@@ -5,9 +5,9 @@ on:
     tags: V* # V를 앞글자로 가지는 태그가 push 될 때 해당 workflow 실행 - ex) V2, V3
 
 env:
-  ECR_REGISTRY: redis
-  ECR_REPOSITORY: ${{ steps.login-ecr.outputs.registry }}
-  IMAGE_TAG: ${{ github.sha }}
+  ECR_REGISTRY: 533267380391.dkr.ecr.ap-northeast-2.amazonaws.com
+  ECR_REPOSITORY: redis
+  IMAGE_TAG: ${{ github.sha }}}
 
 jobs:
   build:

@@ -42,14 +42,26 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
         
       - name: Login to Amazon ECR
-        id: login-ecr
+        id: login-ecr-public
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
       
-      - name: Docker Image Build and Push
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          REGISTRY_ALIAS: i8c7e5c5
+          REPOSITORY: redis
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build . --build-arg JAR_FILE=build/libs/*.jar -t redis
-          docker tag redis:latest public.ecr.aws/k4g0n1m3/redis:latest
-          docker push public.ecr.aws/k4g0n1m3/redis:latest
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG"
 
         
       - name: Deploy to EC2

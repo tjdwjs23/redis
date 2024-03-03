@@ -1,5 +1,5 @@
 #!/bin/bash
-IMAGE_NAME=dockercodemaster/redis # Docker Hub에서 사용하는 이미지 이름
+IMAGE_NAME=public.ecr.aws/k4g0n1m3/redis # Docker Hub에서 사용하는 이미지 이름 -> ECR에서 사용하는 이미지 이름으로 변경
 CONTAINER_NAME=my-container # 컨테이너 이름
 
 echo "> 현재 실행중인 Docker 컨테이너 id 확인"

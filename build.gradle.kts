@@ -53,6 +53,9 @@ dependencies {
     // Kotlin Logging
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.1")
 
+    // Test
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("org.amshove.kluent:kluent:1.73")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

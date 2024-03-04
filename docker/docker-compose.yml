@@ -1,0 +1,26 @@
+version: "3"
+services:
+  mariadb-docker:
+    image: mariadb:latest
+    container_name: "docker-mariadb"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: template
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user123
+    labels:
+      - "name=mariadb"
+      - "mode=standalone"
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mariadb:/var/lib/mysql
+  redis-docker:
+    image: redis:latest
+    command: redis-server --port 6379
+    container_name: "docker-redis"
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - 6379:6379

@@ -1,27 +1,26 @@
 package demo.webflux.user
 
 import demo.webflux.adapters.ui.user.UserController
+import demo.webflux.application.usecases.board.service.BoardService
 import demo.webflux.application.usecases.user.service.UserService
 import demo.webflux.ports.input.UserRequest
 import demo.webflux.ports.output.UserResponse
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
 import reactor.core.publisher.Mono
 import org.junit.jupiter.api.Test
+import org.mockito.BDDMockito.*
 
 class UserControllerTest {
 
-    private val userService: UserService = mockk()
+    private val userService: UserService = mock(UserService::class.java)
     private val userController = UserController(userService)
 
     @Test
     fun `사용자 등록 테스트`() {
         // given
         val userRequest = UserRequest(username = "username", password = "password")
-        every { userService.save(userRequest) } returns Mono.just(UserResponse("username", "password"))
+        given(userService.save(userRequest)).willReturn(Mono.just(UserResponse("username", "password")))
 
         // when
         val result = userController.signup(userRequest).block()
@@ -30,7 +29,7 @@ class UserControllerTest {
         result shouldNotBe null
         result?.username shouldBe "username"
         result?.password shouldBe "password"
-        verify { userService.save(userRequest) }
+        then(userService.save(userRequest))
     }
 
     @Test
@@ -38,7 +37,7 @@ class UserControllerTest {
         // given
         val username = "username"
         val password = "password"
-        every { userService.login(username, password) } returns Mono.just("token")
+        given(userService.login(username, password)).willReturn(Mono.just("token"))
 
         // when
         val result = userController.login(UserRequest(username, password)).block()
@@ -46,6 +45,6 @@ class UserControllerTest {
         // then
         result shouldNotBe null
         result shouldBe "token"
-        verify { userService.login(username, password) }
+        then(userService.login(username, password))
     }
 }

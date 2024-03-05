@@ -1,13 +1,13 @@
 version: "3"
 services:
   mariadb-docker:
-    image: mariadb:latest
+    image: docker.io/bitnami/mariadb:10.6
     container_name: "docker-mariadb"
     environment:
-      MYSQL_ROOT_PASSWORD: root123
-      MYSQL_DATABASE: template
-      MYSQL_USER: user
-      MYSQL_PASSWORD: user123
+      MARIADB_ROOT_PASSWORD: root123
+      MARIADB_DATABASE: template
+      MARIADB_USER: user
+      MARIADB_PASSWORD: user123
     labels:
       - "name=mariadb"
       - "mode=standalone"
@@ -15,6 +15,8 @@ services:
       - 3306:3306
     volumes:
       - ./mariadb:/var/lib/mysql
+    restart: always
+
   redis-docker:
     image: redis:latest
     command: redis-server --port 6379
@@ -24,3 +26,4 @@ services:
       - "mode=standalone"
     ports:
       - 6379:6379
+    restart: always

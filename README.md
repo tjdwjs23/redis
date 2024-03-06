@@ -12,7 +12,7 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 - Spring WebFlux
 - R2DBC (AWS RDS Maria DB)
 - AWS EC2
-- AWS Elastic Cache (Redis)
+- AWS ElastiCache (Redis)
 - AWS Elastic Container Registry (ECR)
 - Docker
 - Kluent (Test)

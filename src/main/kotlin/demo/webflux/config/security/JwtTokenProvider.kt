@@ -1,5 +1,6 @@
 package demo.webflux.config.security
 
+import demo.webflux.domain.user.User
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
@@ -16,16 +17,18 @@ class JwtTokenProvider {
     private val validityInMilliseconds: Long = 3600000 // 1h
 
     fun createToken(username: String): String {
-        val claims: MutableMap<String, Any> = HashMap()
-        claims["sub"] = username
+        val additionalClaims: Map<String, Any> = emptyMap()
         val now = Date()
         val validity = Date(now.time + validityInMilliseconds)
 
         return Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(now)
-            .setExpiration(validity)
+            .claims() // claim 추가
+            .subject(username)
+            .issuedAt(Date(System.currentTimeMillis()))
+            .expiration(validity)
+            .add(additionalClaims)
+            .and()
             .signWith(Keys.hmacShaKeyFor(secretKey.toByteArray(StandardCharsets.UTF_8)))
-            .compact()
+            .compact();
     }
 }

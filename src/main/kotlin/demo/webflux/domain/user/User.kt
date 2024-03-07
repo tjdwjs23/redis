@@ -19,7 +19,7 @@ class UserEntity {
 @RedisHash("user")
 data class User(
     @Id
-    var id: Long,
-    val userName: String,
-    val password: String
+    var id: Long? = null,
+    val userName: String? = null,
+    val password: String? = null
 )

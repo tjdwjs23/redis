@@ -40,7 +40,7 @@ dependencies {
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
     // Redis
-    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive:3.2.3")
 
     // Spring Security
     implementation("io.jsonwebtoken:jjwt:0.12.5")

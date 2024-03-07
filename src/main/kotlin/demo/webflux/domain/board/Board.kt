@@ -14,24 +14,20 @@ import java.time.LocalDateTime
 class BoardEntity {
     @Id
     @Column("ID") var id: Long? = null
-
     @Column("TITLE") var title: String? = null
-
     @Column("CONTENT") var content: String? = null
-
     @Column("CREATED_DATE") var createdDate: LocalDateTime? = null
-
     @Column("UPDATED_DATE") var updatedDate: LocalDateTime? = null
 }
 
 // Redis에 저장하기 위한 클래스
 @RedisHash("board")
 data class Board(
-        @Id var id: Long?,
-        var title: String?,
-        var content: String?,
-        var createdDate: String?,
-        var updatedDate: String?
+        @Id var id: Long? = null,
+        var title: String? = null,
+        var content: String? = null,
+        var createdDate: String? = null,
+        var updatedDate: String? = null
 ){
     fun toBoardResponse(): BoardResponse {
         return BoardResponse(id, title, content, createdDate, updatedDate)

@@ -44,7 +44,12 @@ class BoardService(
         return boardRepository.save(entity)
                 .zipWhen({ savedEntity ->
                     board.id = savedEntity.id
-                    boardRedisRepository.save(board)
+                    boardRedisRepository.save(board).subscribe({
+                        // 성공했을 때의 처리
+                    }, { e ->
+                        // 에러가 발생했을 때의 처리
+                        log.error("save error on Board cache.", e)
+                    })
                     Mono.just(savedEntity)
                 }) { entity, _ ->
                     entity.toResponse()
@@ -61,7 +66,7 @@ class BoardService(
     @Transactional
     fun getAll(): Flux<BoardResponse> {
         return try {
-            Flux.fromIterable(boardRedisRepository.findAll())
+            boardRedisRepository.findAll()
                 .map(Board::toBoardResponse)
         } catch (e: Exception) {
             log.error("Received error on Board cache.", e)
@@ -81,7 +86,7 @@ class BoardService(
      */
     @Transactional
     fun getById(id: Long): Mono<BoardResponse> {
-        return Mono.justOrEmpty(boardRedisRepository.findById(id.toString()))
+        return boardRedisRepository.findById(id.toString())
             .map(Board::toBoardResponse)
             .switchIfEmpty(
                 boardRepository.findById(id.toString())
@@ -113,7 +118,7 @@ class BoardService(
                     boardRequest.id = savedEntity.t1.id!!
                     boardRequest.createdDate = savedEntity.t1.createdDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                     boardRequest.updatedDate = savedEntity.t1.updatedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                    boardRedisRepository.save(boardRequest.toBoard())
+                    boardRedisRepository.save(boardRequest.toBoard()).subscribe()
                 }
             }
             .map { it.t1.toResponse() }
@@ -135,7 +140,7 @@ class BoardService(
             }
             .doOnSuccess { tuple ->
                 if (tuple.t2) {
-                    boardRedisRepository.deleteById(id.toString())
+                    boardRedisRepository.deleteById(id.toString()).subscribe()
                 }
             }
             .map { it.t2 }

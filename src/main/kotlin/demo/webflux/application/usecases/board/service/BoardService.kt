@@ -106,24 +106,24 @@ class BoardService(
     @Transactional
     fun updateById(id: Long, boardRequest: BoardRequest): Mono<BoardResponse> {
         return boardRepository.findById(id.toString())
-            .zipWhen { entity ->
+            .zipWhen({ entity ->
                 entity.title = boardRequest.title
                 entity.content = boardRequest.content
                 entity.updatedDate = LocalDateTime.now()
 
                 boardRepository.save(entity)
-            }
-            .doOnSuccess { savedEntity ->
+            }, { entity, savedEntity ->
                 if (savedEntity != null) {
-                    boardRequest.id = savedEntity.t1.id!!
-                    boardRequest.createdDate = savedEntity.t1.createdDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                    boardRequest.updatedDate = savedEntity.t1.updatedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                    boardRequest.id = savedEntity.id!!
+                    boardRequest.createdDate = savedEntity.createdDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                    boardRequest.updatedDate = savedEntity.updatedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                     boardRedisRepository.save(boardRequest.toBoard()).subscribe()
                 }
-            }
-            .map { it.t1.toResponse() }
+                entity.toResponse()
+            })
             .onErrorMap { e -> throw RuntimeException("게시글 수정에 실패했습니다.", e) }
     }
+
 
 
     /**
@@ -134,18 +134,17 @@ class BoardService(
     @Transactional
     fun deleteById(id: Long): Mono<Boolean> {
         return boardRepository.findById(id.toString())
-            .zipWhen { board ->
-                boardRepository.delete(board)
-                    .then(Mono.just(true))
-            }
-            .doOnSuccess { tuple ->
-                if (tuple.t2) {
-                    boardRedisRepository.deleteById(id.toString()).subscribe()
-                }
-            }
-            .map { it.t2 }
-            .defaultIfEmpty(false)
-            .onErrorMap { e -> throw RuntimeException("게시글 삭제에 실패했습니다.", e) }
+                .zipWhen({ board ->
+                    boardRepository.delete(board)
+                            .then(Mono.just(true))
+                }, { _, result ->
+                    if (result) {
+                        boardRedisRepository.deleteById(id.toString()).subscribe()
+                    }
+                    result
+                })
+                .defaultIfEmpty(false)
+                .onErrorMap { e -> throw RuntimeException("게시글 삭제에 실패했습니다.", e) }
     }
 
 }

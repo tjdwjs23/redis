@@ -41,23 +41,22 @@ class UserService(
                     }
 
                     userRepository.save(userEntity)
-                            .doOnSuccess { savedEntity ->
+                            .zipWhen({ savedEntity ->
                                 if (savedEntity != null) {
                                     userRedisRepository.save(User(savedEntity.id!!, savedEntity.username!!, savedEntity.password!!)).subscribe({
                                         // 성공했을 때의 처리
+                                        log.info("save success on Board cache.")
                                     }, { e ->
                                         // 에러가 발생했을 때의 처리
                                         log.error("save error on Board cache.", e)
                                     })
                                 }
-                            }
-                            .map { savedEntity ->
+                                Mono.just(savedEntity)
+                            }, { savedEntity, _ ->
                                 UserResponse(savedEntity.username!!, savedEntity.password!!)
-                            }
+                            })
                 })
     }
-
-
 
     /**
      * 로그인
@@ -66,25 +65,23 @@ class UserService(
      */
     fun login(username: String, password: String): Mono<String> {
         return userRedisRepository.findByUsername(username)
-            .flatMap { user ->
-                if (passwordEncoder.matches(password, user.password)) {
-                    Mono.just(jwtTokenProvider.createToken(username))
-                } else {
-                    Mono.error<String>(RuntimeException("비밀번호가 일치하지 않습니다."))
-                }
-            }
-            .switchIfEmpty(
-                userRepository.findByUsername(username)
-                    .flatMap { userEntity ->
-                        if (passwordEncoder.matches(password, userEntity.password)) {
-                            Mono.just(jwtTokenProvider.createToken(username))
-                        } else {
-                            Mono.error<String>(RuntimeException("비밀번호가 일치하지 않습니다."))
-                        }
+                .zipWhen({ user ->
+                    if (passwordEncoder.matches(password, user.password)) {
+                        Mono.just(jwtTokenProvider.createToken(username))
+                    } else {
+                        Mono.error<String>(RuntimeException("비밀번호가 일치하지 않습니다."))
                     }
-            )
-            .onErrorReturn("로그인에 실패했습니다.")
+                }, { _, token -> token })
+                .switchIfEmpty(
+                        userRepository.findByUsername(username)
+                                .zipWhen({ userEntity ->
+                                    if (passwordEncoder.matches(password, userEntity.password)) {
+                                        Mono.just(jwtTokenProvider.createToken(username))
+                                    } else {
+                                        Mono.error<String>(RuntimeException("비밀번호가 일치하지 않습니다."))
+                                    }
+                                }, { _, token -> token })
+                )
+                .onErrorReturn("로그인에 실패했습니다.")
     }
-
-
 }

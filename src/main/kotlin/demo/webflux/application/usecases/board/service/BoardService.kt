@@ -1,5 +1,6 @@
 package demo.webflux.application.usecases.board.service
 
+import demo.webflux.application.repositories.board.BoardRedisRepository
 import demo.webflux.application.repositories.board.BoardRepository
 import demo.webflux.domain.board.Board
 import demo.webflux.domain.board.BoardEntity
@@ -16,10 +17,9 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class BoardService(
-        private val boardRepository: BoardRepository,
-        private val redisTemplate: RedisTemplate<String, Any>
+    private val boardRepository: BoardRepository,
+    private val boardRedisRepository: BoardRedisRepository
 ) {
-    private val valueOperations = redisTemplate.opsForValue()
 
     val log = KotlinLogging.logger {}
 
@@ -44,7 +44,7 @@ class BoardService(
         return boardRepository.save(entity)
                 .zipWhen({ savedEntity ->
                     board.id = savedEntity.id
-                    valueOperations.set(savedEntity.id.toString(), board)
+                    boardRedisRepository.save(board)
                     Mono.just(savedEntity)
                 }) { entity, _ ->
                     entity.toResponse()
@@ -60,21 +60,17 @@ class BoardService(
      */
     @Transactional
     fun getAll(): Flux<BoardResponse> {
-        val redisKeys = redisTemplate.keys("*") ?: emptySet()
-
-        return Flux.fromIterable(redisKeys)
-                .flatMap { id ->
-                    Mono.justOrEmpty(valueOperations.get(id) as? Board)
-                            .map(Board::toBoardResponse)
-                            .doOnError { e -> log.error("Received error on Board cache.", e) }
-                            .onErrorComplete()
-                }
-                .switchIfEmpty(
-                        boardRepository.findAll()
-                                .map(BoardEntity::toResponse)
-                )
-                .onErrorMap { e -> throw RuntimeException("게시글 조회에 실패했습니다.", e) }
+        return try {
+            Flux.fromIterable(boardRedisRepository.findAll())
+                .map(Board::toBoardResponse)
+        } catch (e: Exception) {
+            log.error("Received error on Board cache.", e)
+            boardRepository.findAll()
+                .map(BoardEntity::toResponse)
+        }.onErrorMap { e -> throw RuntimeException("게시글 조회에 실패했습니다.", e) }
     }
+
+
 
 
     /**
@@ -85,15 +81,13 @@ class BoardService(
      */
     @Transactional
     fun getById(id: Long): Mono<BoardResponse> {
-        return Mono.justOrEmpty(valueOperations.get(id.toString()) as? Board)
-                .map(Board::toBoardResponse)
-                .doOnError { e -> log.error("Received error on Board cache.", e) }
-                .onErrorComplete()
-                .switchIfEmpty(
-                        boardRepository.findById(id.toString())
-                                .map(BoardEntity::toResponse)
-                )
-                .onErrorMap { e -> throw RuntimeException("게시글 조회에 실패했습니다.", e) }
+        return Mono.justOrEmpty(boardRedisRepository.findById(id.toString()))
+            .map(Board::toBoardResponse)
+            .switchIfEmpty(
+                boardRepository.findById(id.toString())
+                    .map(BoardEntity::toResponse)
+            )
+            .onErrorMap { e -> throw RuntimeException("게시글 조회에 실패했습니다.", e) }
     }
 
 
@@ -107,23 +101,25 @@ class BoardService(
     @Transactional
     fun updateById(id: Long, boardRequest: BoardRequest): Mono<BoardResponse> {
         return boardRepository.findById(id.toString())
-                .zipWhen { entity ->
-                    entity.title = boardRequest.title
-                    entity.content = boardRequest.content
-                    entity.updatedDate = LocalDateTime.now()
-                    boardRepository.save(entity)
+            .zipWhen { entity ->
+                entity.title = boardRequest.title
+                entity.content = boardRequest.content
+                entity.updatedDate = LocalDateTime.now()
+
+                boardRepository.save(entity)
+            }
+            .doOnSuccess { savedEntity ->
+                if (savedEntity != null) {
+                    boardRequest.id = savedEntity.t1.id!!
+                    boardRequest.createdDate = savedEntity.t1.createdDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                    boardRequest.updatedDate = savedEntity.t1.updatedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                    boardRedisRepository.save(boardRequest.toBoard())
                 }
-                .doOnSuccess { savedEntity ->
-                    if (savedEntity != null) {
-                        boardRequest.id = savedEntity.t1.id!!
-                        boardRequest.createdDate = savedEntity.t1.createdDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                        boardRequest.updatedDate = savedEntity.t1.updatedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                        valueOperations.set(id.toString(), boardRequest.toBoard())
-                    }
-                }
-                .map { it.t1.toResponse() }
-                .onErrorMap { e -> throw RuntimeException("게시글 수정에 실패했습니다.", e) }
+            }
+            .map { it.t1.toResponse() }
+            .onErrorMap { e -> throw RuntimeException("게시글 수정에 실패했습니다.", e) }
     }
+
 
     /**
      * 게시글 삭제
@@ -133,18 +129,18 @@ class BoardService(
     @Transactional
     fun deleteById(id: Long): Mono<Boolean> {
         return boardRepository.findById(id.toString())
-                .zipWhen { board ->
-                    boardRepository.delete(board)
-                            .then(Mono.just(true))
+            .zipWhen { board ->
+                boardRepository.delete(board)
+                    .then(Mono.just(true))
+            }
+            .doOnSuccess { tuple ->
+                if (tuple.t2) {
+                    boardRedisRepository.deleteById(id.toString())
                 }
-                .map { it.t2 }
-                .defaultIfEmpty(false)
-                .doOnSuccess { isDeleted ->
-                    if (isDeleted) {
-                        redisTemplate.delete(id.toString())
-                    }
-                }
-                .onErrorMap { e -> throw RuntimeException("게시글 삭제에 실패했습니다.", e) }
+            }
+            .map { it.t2 }
+            .defaultIfEmpty(false)
+            .onErrorMap { e -> throw RuntimeException("게시글 삭제에 실패했습니다.", e) }
     }
 
 }

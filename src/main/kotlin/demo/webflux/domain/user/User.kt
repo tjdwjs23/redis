@@ -16,6 +16,7 @@ class UserEntity {
 }
 
 data class User(
+    @Id
     var id: Long,
     val userName: String,
     val password: String

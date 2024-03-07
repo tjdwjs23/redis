@@ -6,11 +6,14 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
+@EnableRedisRepositories
 class RedisConfig {
     @Value("\${server.data.redis.host}")
     private val host: String? = null
@@ -25,13 +28,10 @@ class RedisConfig {
 
     @Bean
     fun redisTemplate(): RedisTemplate<String, Any> {
-        val redisTemplate: RedisTemplate<String, Any> = RedisTemplate()
+        val redisTemplate = RedisTemplate<String, Any>()
         redisTemplate.setConnectionFactory(redisConnectionFactory())
-        redisTemplate.setKeySerializer(StringRedisSerializer())
-
-        // Java 기본 직렬화가 아닌 JSON 직렬화 설정
-        redisTemplate.setValueSerializer(GenericJackson2JsonRedisSerializer())
-
+        redisTemplate.keySerializer = StringRedisSerializer()
+        redisTemplate.valueSerializer = GenericJackson2JsonRedisSerializer()
         return redisTemplate
     }
 }

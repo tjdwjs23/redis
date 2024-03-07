@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import demo.webflux.ports.output.BoardResponse
 import org.springframework.data.annotation.Id
+import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
@@ -24,8 +25,9 @@ class BoardEntity {
 }
 
 // Redis에 저장하기 위한 클래스
+@RedisHash("board")
 data class Board @JsonCreator constructor(
-        @JsonProperty("id") var id: Long?,
+        @JsonProperty("id") @Id var id: Long?,
         @JsonProperty("title") var title: String?,
         @JsonProperty("content") var content: String?,
         @JsonProperty("createdDate") var createdDate: String?,

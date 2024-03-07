@@ -26,12 +26,12 @@ class BoardEntity {
 
 // Redis에 저장하기 위한 클래스
 @RedisHash("board")
-data class Board @JsonCreator constructor(
-        @JsonProperty("id") @Id var id: Long?,
-        @JsonProperty("title") var title: String?,
-        @JsonProperty("content") var content: String?,
-        @JsonProperty("createdDate") var createdDate: String?,
-        @JsonProperty("updatedDate") var updatedDate: String?
+data class Board(
+        @Id var id: Long?,
+        var title: String?,
+        var content: String?,
+        var createdDate: String?,
+        var updatedDate: String?
 ){
     fun toBoardResponse(): BoardResponse {
         return BoardResponse(id, title, content, createdDate, updatedDate)

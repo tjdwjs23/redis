@@ -21,7 +21,8 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("/v1/board")
 @Tag(name = "BoardController", description = "게시판 관련 API")
-@SecurityScheme(type = SecuritySchemeType.APIKEY, name = "Authorization" , `in` = SecuritySchemeIn.HEADER)
+@SecurityRequirement(name = "Authorization")
+@SecurityScheme(type = SecuritySchemeType.APIKEY, name = "Authorization", `in` = SecuritySchemeIn.HEADER)
 class BoardController(private val boardService: BoardService) {
     /**
      * 게시글 저장

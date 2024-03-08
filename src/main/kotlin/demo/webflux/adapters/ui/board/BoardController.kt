@@ -3,7 +3,16 @@ package demo.webflux.adapters.ui.board
 import demo.webflux.application.usecases.board.service.BoardService
 import demo.webflux.ports.input.BoardRequest
 import demo.webflux.ports.output.BoardResponse
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.Parameters
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
+import io.swagger.v3.oas.annotations.info.Info
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -12,6 +21,7 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("/v1/board")
 @Tag(name = "BoardController", description = "게시판 관련 API")
+@SecurityScheme(type = SecuritySchemeType.APIKEY, name = "Authorization" , `in` = SecuritySchemeIn.HEADER)
 class BoardController(private val boardService: BoardService) {
     /**
      * 게시글 저장
@@ -21,7 +31,7 @@ class BoardController(private val boardService: BoardService) {
     @PostMapping
     @Operation(summary = "게시글 저장", description = "새 게시글을 저장합니다.")
     fun post(
-            @RequestBody boardRequest: BoardRequest,
+        @RequestBody boardRequest: BoardRequest,
     ): Mono<BoardResponse> {
         return boardService.save(boardRequest)
     }

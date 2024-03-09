@@ -8,6 +8,7 @@ data class BoardResponse (
         var id: Long? = null,
         val title: String? = null,
         val content: String? = null,
+        var writeId: String? = null,
         var createdDate: String? = null,
         var updatedDate: String? = null
 ){

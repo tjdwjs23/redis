@@ -37,6 +37,7 @@ class BoardService(
         val entity = BoardEntity().apply {
             title = board.title
             content = board.content
+            writeId = board.writeId
             createdDate = LocalDateTime.parse(board.createdDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
             updatedDate = LocalDateTime.now()
         }
@@ -44,6 +45,7 @@ class BoardService(
         return boardRepository.save(entity)
                 .zipWhen({ savedEntity ->
                     board.id = savedEntity.id
+                    board.writeId = savedEntity.writeId
                     boardRedisRepository.save(board).subscribe({
                         // 성공했을 때의 처리
                     }, { e ->

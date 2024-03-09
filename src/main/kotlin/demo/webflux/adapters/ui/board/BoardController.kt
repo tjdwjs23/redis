@@ -3,6 +3,7 @@ package demo.webflux.adapters.ui.board
 import demo.webflux.application.usecases.board.service.BoardService
 import demo.webflux.ports.input.BoardRequest
 import demo.webflux.ports.output.BoardResponse
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -14,6 +15,9 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -31,10 +35,32 @@ class BoardController(private val boardService: BoardService) {
      */
     @PostMapping
     @Operation(summary = "게시글 저장", description = "새 게시글을 저장합니다.")
-    fun post(
-        @RequestBody boardRequest: BoardRequest,
-    ): Mono<BoardResponse> {
-        return boardService.save(boardRequest)
+    fun post(@RequestBody boardRequest: BoardRequest): Mono<BoardResponse> {
+
+        var logger = KotlinLogging.logger {}
+
+        return ReactiveSecurityContextHolder.getContext()
+                .map { it.authentication }
+                .doOnNext { authentication ->
+                    logger.info("Authentication type: ${authentication.javaClass.name}")
+                }
+                .flatMap { authentication ->
+                    when (authentication) {
+                        is JwtAuthenticationToken -> {
+                            boardRequest.writeId = authentication.name.toString()
+                            println("writeId: ${boardRequest.writeId}")
+                            return@flatMap boardService.save(boardRequest)
+                        }
+                        is UsernamePasswordAuthenticationToken -> {
+                            boardRequest.writeId = authentication.name.toString()
+                            println("writeId: ${boardRequest.writeId}")
+                            return@flatMap boardService.save(boardRequest)
+                        }
+                        else -> {
+                            Mono.error(IllegalStateException("지원하지 않는 인증 타입입니다."))
+                        }
+                    }
+                }
     }
 
     /**

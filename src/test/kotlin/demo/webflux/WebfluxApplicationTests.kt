@@ -11,14 +11,14 @@ import org.springframework.boot.test.context.SpringBootTest
 class WebfluxApplicationTests {
 
     @Autowired
-    private lateinit var boardController: BoardController
+    lateinit var boardController: BoardController
 
     @Autowired
-    private lateinit var userConroller: UserController
+    lateinit var userController: UserController
 
     @Test
     fun contextLoads() {
         assertThat(boardController).isNotNull
-        assertThat(userConroller).isNotNull
+        assertThat(userController).isNotNull
     }
 }

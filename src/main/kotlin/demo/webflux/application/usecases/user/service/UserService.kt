@@ -29,8 +29,8 @@ class UserService(
 
     /**
      * 사용자 등록
-     * @param userRequest 사용자
-     * @return 등록된 사용자
+     * @param userRequest(username, password)
+     * @return userResponse (username, password)
      */
     fun save(userRequest: UserRequest): Mono<UserResponse> {
         return userRedisRepository.findByUsername(userRequest.username)
@@ -64,8 +64,8 @@ class UserService(
 
     /**
      * 로그인
-     * @param userRequest 사용자
-     * @return 토큰
+     * @param userRequest(username, password)
+     * @return userResponse (username, token)
      */
     fun login(userRequest: UserRequest): Mono<UserResponse> {
         return userRedisRepository.findByUsername(userRequest.username)

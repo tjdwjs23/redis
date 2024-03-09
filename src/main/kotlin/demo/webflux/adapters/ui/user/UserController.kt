@@ -19,8 +19,8 @@ class UserController(private val userService: UserService) {
 
     /**
      * 사용자 등록
-     * @param userRequest 사용자
-     * @return 등록된 사용자
+     * @param userRequest(username, password)
+     * @return userResponse (username, password)
      */
     @PostMapping("/signup")
     @Operation(summary = "사용자 등록", description = "새로운 사용자를 등록합니다.")
@@ -32,8 +32,8 @@ class UserController(private val userService: UserService) {
 
     /**
      * 로그인
-     * @param userRequest 사용자
-     * @return 토큰
+     * @param userRequest(username, password)
+     * @return userResponse (username, token)
      */
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "사용자 로그인을 수행하고 토큰을 반환합니다.")

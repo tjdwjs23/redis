@@ -28,6 +28,9 @@ import reactor.core.publisher.Mono
 @SecurityRequirement(name = "Authorization")
 @SecurityScheme(type = SecuritySchemeType.APIKEY, name = "Authorization", `in` = SecuritySchemeIn.HEADER)
 class BoardController(private val boardService: BoardService) {
+
+    var log = KotlinLogging.logger {}
+
     /**
      * 게시글 저장
      * @param boardRequest 게시글
@@ -37,20 +40,13 @@ class BoardController(private val boardService: BoardService) {
     @Operation(summary = "게시글 저장", description = "새 게시글을 저장합니다.")
     fun post(@RequestBody boardRequest: BoardRequest): Mono<BoardResponse> {
 
-        var logger = KotlinLogging.logger {}
-
         return ReactiveSecurityContextHolder.getContext()
                 .map { it.authentication }
                 .doOnNext { authentication ->
-                    logger.info("Authentication type: ${authentication.javaClass.name}")
+                    log.info("Authentication type: ${authentication.javaClass.name}")
                 }
                 .flatMap { authentication ->
                     when (authentication) {
-                        is JwtAuthenticationToken -> {
-                            boardRequest.writeId = authentication.name.toString()
-                            println("writeId: ${boardRequest.writeId}")
-                            return@flatMap boardService.save(boardRequest)
-                        }
                         is UsernamePasswordAuthenticationToken -> {
                             boardRequest.writeId = authentication.name.toString()
                             println("writeId: ${boardRequest.writeId}")
@@ -111,6 +107,22 @@ class BoardController(private val boardService: BoardService) {
             @PathVariable id: Long,
             @RequestBody boardRequest: BoardRequest,
     ): Mono<BoardResponse> {
-        return boardService.updateById(id, boardRequest)
+        return ReactiveSecurityContextHolder.getContext()
+                .map { it.authentication }
+                .doOnNext { authentication ->
+                    log.info("Authentication type: ${authentication.javaClass.name}")
+                }
+                .flatMap { authentication ->
+                    when (authentication) {
+                        is UsernamePasswordAuthenticationToken -> {
+                            boardRequest.writeId = authentication.name.toString()
+                            println("writeId: ${boardRequest.writeId}")
+                            return@flatMap boardService.updateById(id, boardRequest)
+                        }
+                        else -> {
+                            Mono.error(IllegalStateException("지원하지 않는 인증 타입입니다."))
+                        }
+                    }
+                }
     }
 }

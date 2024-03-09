@@ -111,12 +111,14 @@ class BoardService(
             .zipWhen({ entity ->
                 entity.title = boardRequest.title
                 entity.content = boardRequest.content
+                entity.writeId = boardRequest.writeId
                 entity.updatedDate = LocalDateTime.now()
 
                 boardRepository.save(entity)
             }, { entity, savedEntity ->
                 if (savedEntity != null) {
                     boardRequest.id = savedEntity.id!!
+                    boardRequest.writeId = savedEntity.writeId
                     boardRequest.createdDate = savedEntity.createdDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                     boardRequest.updatedDate = savedEntity.updatedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                     boardRedisRepository.save(boardRequest.toBoard()).subscribe()

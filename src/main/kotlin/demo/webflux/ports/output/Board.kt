@@ -13,6 +13,6 @@ data class BoardResponse (
         var updatedDate: String? = null
 ){
     fun toBoard(): Board {
-        return Board(id, title, content, createdDate, updatedDate)
+        return Board(id, title, content, writeId, createdDate, updatedDate)
     }
 }

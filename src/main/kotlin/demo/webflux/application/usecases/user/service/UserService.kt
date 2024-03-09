@@ -67,8 +67,26 @@ class UserService(
      * @param userRequest 사용자
      * @return 토큰
      */
-    fun login(request: UserRequest): UserResponse {
-        val token = jwtSupport.generate(request.username)
-        return UserResponse(request.username, token.principal)
+    fun login(userRequest: UserRequest): Mono<UserResponse> {
+        return userRedisRepository.findByUsername(userRequest.username)
+                .zipWhen({ user ->
+                    if (passwordEncoder.matches(userRequest.password, user.password)) {
+                        Mono.just(UserResponse(userRequest.username, jwtSupport.generate(userRequest.username).principal))
+                    } else {
+                        Mono.error(RuntimeException("비밀번호가 일치하지 않습니다."))
+                    }
+                }, { _, token -> token })
+                .switchIfEmpty(
+                        userRepository.findByUsername(userRequest.username)
+                                .zipWhen({ userEntity ->
+                                    if (passwordEncoder.matches(userRequest.password, userEntity.password)) {
+                                        Mono.just(UserResponse(userRequest.username, jwtSupport.generate(userRequest.username).principal))
+                                    } else {
+                                        Mono.error(RuntimeException("비밀번호가 일치하지 않습니다."))
+                                    }
+                                }, { _, token -> token })
+                )
+                .onErrorResume { Mono.just(UserResponse("오류", "로그인에 실패했습니다.")) }
     }
+
 }

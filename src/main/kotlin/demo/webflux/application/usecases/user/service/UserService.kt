@@ -2,13 +2,16 @@ package demo.webflux.application.usecases.user.service
 
 import demo.webflux.application.repositories.user.UserRedisRepository
 import demo.webflux.application.repositories.user.UserRepository
-import demo.webflux.config.security.JwtTokenProvider
+import demo.webflux.config.security.JwtSupport
+import demo.webflux.config.security.UserDetailsService
 import demo.webflux.domain.user.User
 import demo.webflux.domain.user.UserEntity
 import demo.webflux.ports.input.UserRequest
 import demo.webflux.ports.output.UserResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -16,9 +19,10 @@ import reactor.core.publisher.Mono
 @Service
 class UserService(
         private val passwordEncoder: PasswordEncoder,
-        private val jwtTokenProvider: JwtTokenProvider,
         private val userRepository: UserRepository,
-        private  val userRedisRepository: UserRedisRepository
+        private  val userRedisRepository: UserRedisRepository,
+        private val userDetailsService: UserDetailsService,
+        private val jwtSupport: JwtSupport
 ) {
 
     val log = KotlinLogging.logger {}
@@ -63,25 +67,8 @@ class UserService(
      * @param userRequest 사용자
      * @return 토큰
      */
-    fun login(username: String, password: String): Mono<String> {
-        return userRedisRepository.findByUsername(username)
-                .zipWhen({ user ->
-                    if (passwordEncoder.matches(password, user.password)) {
-                        Mono.just(jwtTokenProvider.createToken(username))
-                    } else {
-                        Mono.error<String>(RuntimeException("비밀번호가 일치하지 않습니다."))
-                    }
-                }, { _, token -> token })
-                .switchIfEmpty(
-                        userRepository.findByUsername(username)
-                                .zipWhen({ userEntity ->
-                                    if (passwordEncoder.matches(password, userEntity.password)) {
-                                        Mono.just(jwtTokenProvider.createToken(username))
-                                    } else {
-                                        Mono.error<String>(RuntimeException("비밀번호가 일치하지 않습니다."))
-                                    }
-                                }, { _, token -> token })
-                )
-                .onErrorReturn("로그인에 실패했습니다.")
+    fun login(request: UserRequest): UserResponse {
+        val token = jwtSupport.generate(request.username)
+        return UserResponse(request.username, token.principal)
     }
 }

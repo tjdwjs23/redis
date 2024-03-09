@@ -39,7 +39,7 @@ class UserController(private val userService: UserService) {
     @Operation(summary = "로그인", description = "사용자 로그인을 수행하고 토큰을 반환합니다.")
     fun login(
         @RequestBody userRequest: UserRequest
-    ): Mono<String> {
-        return userService.login(userRequest.username, userRequest.password)
+    ): UserResponse {
+        return userService.login(userRequest)
     }
 }

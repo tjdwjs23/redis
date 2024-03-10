@@ -15,12 +15,16 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 - AWS ElastiCache (Redis)
 - AWS Elastic Container Registry (ECR)
 - Docker
-- Kluent (Test)
 - Swagger (Docs)
 
 ## TODO
 - AWS Elastic Container Service (ECS)
 - Coroutine
+
+## Test
+- Mockito (BDDMockito)
+- Kluent
+- WebClient (Authorization Header)
   
 ## CI/CD
 

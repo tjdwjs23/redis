@@ -43,13 +43,12 @@ class BoardController(private val boardService: BoardService) {
         return ReactiveSecurityContextHolder.getContext()
                 .map { it.authentication }
                 .doOnNext { authentication ->
-                    log.info("Authentication type: ${authentication.javaClass.name}")
+                    log.info { "Authentication type: ${authentication.javaClass.name}" }
                 }
                 .flatMap { authentication ->
                     when (authentication) {
                         is UsernamePasswordAuthenticationToken -> {
                             boardRequest.writeId = authentication.name.toString()
-                            println("writeId: ${boardRequest.writeId}")
                             return@flatMap boardService.save(boardRequest)
                         }
                         else -> {
@@ -110,7 +109,7 @@ class BoardController(private val boardService: BoardService) {
         return ReactiveSecurityContextHolder.getContext()
                 .map { it.authentication }
                 .doOnNext { authentication ->
-                    log.info("Authentication type: ${authentication.javaClass.name}")
+                    log.info { "Authentication type: ${authentication.javaClass.name}" }
                 }
                 .flatMap { authentication ->
                     when (authentication) {

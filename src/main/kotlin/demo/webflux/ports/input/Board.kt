@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import demo.webflux.domain.board.Board
 
 data class BoardRequest (
-        var id: Long,
+        var id: Long? = null,
         val title: String,
         val content: String,
         var writeId: String? = null,

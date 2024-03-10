@@ -50,7 +50,7 @@ class BoardService(
                         // 성공했을 때의 처리
                     }, { e ->
                         // 에러가 발생했을 때의 처리
-                        log.error("save error on Board cache.", e)
+                        log.error { "save error on Board cache. ${e}" }
                     })
                     Mono.just(savedEntity)
                 }) { entity, _ ->
@@ -71,7 +71,7 @@ class BoardService(
             boardRedisRepository.findAll()
                 .map(Board::toBoardResponse)
         } catch (e: Exception) {
-            log.error("Received error on Board cache.", e)
+            log.error { "Received error on Board cache. ${e}"}
             boardRepository.findAll()
                 .map(BoardEntity::toResponse)
         }.onErrorMap { e -> throw RuntimeException("게시글 조회에 실패했습니다.", e) }
@@ -157,6 +157,7 @@ fun BoardEntity.toResponse() = BoardResponse(
         this.id!!,
         this.title!!,
         this.content!!,
+        this.writeId!!,
         this.createdDate!!.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
         this.updatedDate!!.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 )

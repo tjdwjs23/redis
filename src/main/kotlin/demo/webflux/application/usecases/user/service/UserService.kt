@@ -34,7 +34,7 @@ class UserService(
      */
     fun save(userRequest: UserRequest): Mono<UserResponse> {
         return userRedisRepository.findByUsername(userRequest.username)
-                .flatMap { existingUser ->
+                .flatMap {
                     Mono.error<UserResponse>(RuntimeException("사용자 이름이 이미 존재합니다: ${userRequest.username}"))
                 }
                 .switchIfEmpty(Mono.defer {
@@ -49,10 +49,10 @@ class UserService(
                                 if (savedEntity != null) {
                                     userRedisRepository.save(User(savedEntity.id!!, savedEntity.username!!, savedEntity.password!!)).subscribe({
                                         // 성공했을 때의 처리
-                                        log.info("save success on Board cache.")
+                                        log.info {"save success on Board cache." }
                                     }, { e ->
                                         // 에러가 발생했을 때의 처리
-                                        log.error("save error on Board cache.", e)
+                                        log.error{"save error on Board cache.${e}"}
                                     })
                                 }
                                 Mono.just(savedEntity)

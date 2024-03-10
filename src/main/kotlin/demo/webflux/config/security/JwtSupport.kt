@@ -25,6 +25,11 @@ class JwtSupport(
     private val jwtKey = Keys.hmacShaKeyFor(key)
     private val parser = Jwts.parserBuilder().setSigningKey(jwtKey).build()
 
+    /**
+     * 토큰 생성
+     * @param username 사용자 이름
+     * @return BearerToken
+     */
     fun generate(username: String): BearerToken {
         val builder = Jwts.builder()
                 .setSubject(username)

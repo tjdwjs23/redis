@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
+// RDB에 저장하기 위한 Entity 클래스
 @Table("USER")
 class UserEntity {
     @Id
@@ -16,6 +17,7 @@ class UserEntity {
 
 }
 
+// Redis 저장하기 위한 Data 클래스
 @RedisHash("user")
 data class User(
     @Id

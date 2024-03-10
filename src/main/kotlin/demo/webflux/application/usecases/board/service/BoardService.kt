@@ -44,8 +44,10 @@ class BoardService(
 
         return boardRepository.save(entity)
                 .zipWhen({ savedEntity ->
+                    // 저장된 Entity 정보를 board에 반영
                     board.id = savedEntity.id
                     board.writeId = savedEntity.writeId
+                    // Redis에 저장
                     boardRedisRepository.save(board).subscribe({
                         // 성공했을 때의 처리
                     }, { e ->

@@ -33,7 +33,7 @@ class UserService(
      * @return userResponse (username, password)
      */
     fun save(userRequest: UserRequest): Mono<UserResponse> {
-        return userRedisRepository.findByUsername(userRequest.username)
+        return userRepository.findByUsername(userRequest.username)
                 .flatMap {
                     Mono.error<UserResponse>(RuntimeException("사용자 이름이 이미 존재합니다: ${userRequest.username}"))
                 }

@@ -21,7 +21,7 @@ class BoardEntity {
     @Column("UPDATED_DATE") var updatedDate: LocalDateTime? = null
 }
 
-// Redis에 저장하기 위한 클래스
+// Redis에 저장하기 위한 Data 클래스
 @RedisHash("board")
 data class Board(
         @Id var id: Long? = null,

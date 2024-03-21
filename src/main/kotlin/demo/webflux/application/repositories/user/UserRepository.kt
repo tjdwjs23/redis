@@ -1,6 +1,5 @@
 package demo.webflux.application.repositories.user
 
-import demo.webflux.domain.board.Board
 import demo.webflux.domain.user.User
 import demo.webflux.domain.user.UserEntity
 import org.springframework.data.redis.core.ReactiveRedisOperations
@@ -10,31 +9,32 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Repository
-interface UserRepository: ReactiveCrudRepository<UserEntity, String> {
+interface UserRepository : ReactiveCrudRepository<UserEntity, String> {
     fun findByUsername(username: String): Mono<UserEntity>
 }
 
 interface UserRedisRepository {
     fun findAll(): Flux<User>
-    fun findByUsername(username: String): Mono<User>
-    fun save(user: User): Mono<User>
-    fun findById(id: String): Mono<User>
 
+    fun findByUsername(username: String): Mono<User>
+
+    fun save(user: User): Mono<User>
+
+    fun findById(id: String): Mono<User>
 }
 
 @Repository
 class UserRedisRepositoryImpl(
-    private val operations: ReactiveRedisOperations<String, Any>
+    private val operations: ReactiveRedisOperations<String, Any>,
 ) : UserRedisRepository {
-
     override fun findAll(): Flux<User> {
         return operations.opsForList().range("user", 0, -1).cast(User::class.java)
     }
 
     override fun findByUsername(username: String): Mono<User> {
         return findAll()
-                .filter { p: User -> p.userName == username }
-                .singleOrEmpty()
+            .filter { p: User -> p.userName == username }
+            .singleOrEmpty()
     }
 
     override fun save(user: User): Mono<User> {
@@ -42,6 +42,6 @@ class UserRedisRepositoryImpl(
     }
 
     override fun findById(id: String): Mono<User> {
-        return findAll().filter { p: User -> p.id.toString() == id }.last();
+        return findAll().filter { p: User -> p.id.toString() == id }.last()
     }
 }

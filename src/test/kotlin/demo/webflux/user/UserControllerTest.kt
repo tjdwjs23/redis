@@ -6,12 +6,13 @@ import demo.webflux.ports.input.UserRequest
 import demo.webflux.ports.output.UserResponse
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldNotBe
-import reactor.core.publisher.Mono
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
+import org.mockito.Mockito.mock
+import reactor.core.publisher.Mono
 
 class UserControllerTest {
-
     private val userService: UserService = mock(UserService::class.java)
     private val userController = UserController(userService)
 

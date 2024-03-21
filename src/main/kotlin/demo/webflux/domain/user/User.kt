@@ -9,12 +9,14 @@ import org.springframework.data.relational.core.mapping.Table
 @Table("USER")
 class UserEntity {
     @Id
-    @Column("ID") var id: Long? = null
+    @Column("ID")
+    var id: Long? = null
+
     @Column("USER_NAME")
     var username: String? = null
+
     @Column("PASSWORD")
     var password: String? = null
-
 }
 
 // Redis 저장하기 위한 Data 클래스
@@ -23,5 +25,5 @@ data class User(
     @Id
     var id: Long? = null,
     val userName: String? = null,
-    val password: String? = null
+    val password: String? = null,
 )

@@ -13,15 +13,15 @@ import java.util.Date
 
 class BearerToken(val value: String) : AbstractAuthenticationToken(AuthorityUtils.NO_AUTHORITIES) {
     override fun getCredentials() = value
+
     override fun getPrincipal() = value
 }
 
 @Component
 class JwtSupport(
-        @Value("\${security.jwt.token.secret-key}")
-        private val key: ByteArray
+    @Value("\${security.jwt.token.secret-key}")
+    private val key: ByteArray,
 ) {
-
     private val jwtKey = Keys.hmacShaKeyFor(key)
     private val parser = Jwts.parserBuilder().setSigningKey(jwtKey).build()
 
@@ -31,7 +31,8 @@ class JwtSupport(
      * @return BearerToken
      */
     fun generate(username: String): BearerToken {
-        val builder = Jwts.builder()
+        val builder =
+            Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.now().plus(15, ChronoUnit.MINUTES)))
@@ -43,7 +44,10 @@ class JwtSupport(
         return parser.parseClaimsJws(token.value).body.subject
     }
 
-    fun isValid(token: BearerToken, userDetails: UserDetails?): Boolean {
+    fun isValid(
+        token: BearerToken,
+        userDetails: UserDetails?,
+    ): Boolean {
         val claims = parser.parseClaimsJws(token.value).body
         val unexpired = claims.expiration.after(Date.from(Instant.now()))
         return unexpired && (claims.subject == userDetails?.username)

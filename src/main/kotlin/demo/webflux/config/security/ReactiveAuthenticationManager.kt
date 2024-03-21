@@ -12,15 +12,15 @@ import reactor.core.publisher.Mono
 
 @Component
 class JwtAuthenticationManager(
-        private val jwtSupport: JwtSupport,
-        private val users: ReactiveUserDetailsService
+    private val jwtSupport: JwtSupport,
+    private val users: ReactiveUserDetailsService,
 ) : ReactiveAuthenticationManager {
     override fun authenticate(authentication: Authentication?): Mono<Authentication> {
         return Mono.justOrEmpty(authentication)
-                .filter { auth -> auth is BearerToken }
-                .cast(BearerToken::class.java)
-                .flatMap { jwt -> mono { validate(jwt) } }
-                .onErrorMap { error -> InvalidBearerToken(error.message) }
+            .filter { auth -> auth is BearerToken }
+            .cast(BearerToken::class.java)
+            .flatMap { jwt -> mono { validate(jwt) } }
+            .onErrorMap { error -> InvalidBearerToken(error.message) }
     }
 
     private suspend fun validate(token: BearerToken): Authentication {
@@ -35,4 +35,4 @@ class JwtAuthenticationManager(
     }
 }
 
-class InvalidBearerToken(message: String?): AuthenticationException(message)
+class InvalidBearerToken(message: String?) : AuthenticationException(message)

@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
-
 @Configuration
 @Profile("local", "dev")
 class SwaggerConfig() {
@@ -18,8 +17,8 @@ class SwaggerConfig() {
                 Components()
                     .addSecuritySchemes(
                         "Authorization",
-                        SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
-                    )
+                        SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT"),
+                    ),
             )
     }
 }

@@ -17,6 +17,7 @@ This project is a web application that implements CRUD (Create, Read, Update, De
 - AWS Elastic Container Service (ECS)
 - Docker
 - Swagger (Docs)
+- KLint
 
 ## Test
 - Mockito (BDDMockito)

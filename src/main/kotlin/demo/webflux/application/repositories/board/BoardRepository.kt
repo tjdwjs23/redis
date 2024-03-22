@@ -3,11 +3,17 @@ package demo.webflux.application.repositories.board
 import demo.webflux.domain.board.Board
 import demo.webflux.domain.board.BoardEntity
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Range
 import org.springframework.data.redis.core.ReactiveRedisOperations
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.sql.Timestamp
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
 
 @Repository
 interface BoardRepository : ReactiveCrudRepository<BoardEntity, String>
@@ -31,13 +37,29 @@ class BoardRedisRepositoryImpl(
     private val pageable = Pageable.unpaged()
 
     override fun save(board: Board): Mono<Board> {
-        return operations.opsForList().rightPush("board", board).map { board }
+        // ISO 8601 날짜-시간 문자열을 파싱하기 위한 포매터
+        val formatter = DateTimeFormatter.ISO_DATE_TIME
+        // board.createdDate 문자열을 LocalDateTime 객체로 파싱
+        val localDateTime = LocalDateTime.parse(board.createdDate, formatter)
+        // LocalDateTime을 시스템 기본 시간대의 ZonedDateTime으로 변환 후, Epoch 초로 변환
+        val score = localDateTime.atZone(ZoneId.of("Asia/Seoul")).toInstant().getEpochSecond().toDouble()
+
+        return operations.opsForZSet()
+            .add("board", board, score)
+            .map { board }
     }
 
+
     override fun findAll(pageable: Pageable): Flux<Board> {
-        val start = pageable.offset
+        val start = pageable.offset * pageable.pageSize
         val end = start + pageable.pageSize - 1
-        return operations.opsForList().range("board", start, end).cast(Board::class.java)
+
+        val range = Range.closed(start, end)
+
+        // ZREVRANGE를 사용하여 데이터 조회
+        return operations.opsForZSet()
+            .reverseRange("board", range)
+            .map { it as Board}
     }
 
     override fun findById(id: String): Mono<Board> {
